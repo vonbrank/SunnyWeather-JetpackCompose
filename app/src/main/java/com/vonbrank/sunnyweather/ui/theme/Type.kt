@@ -1,4 +1,4 @@
-package com.example.sunnyweather.ui.theme
+package com.vonbrank.sunnyweather.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
