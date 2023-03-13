@@ -13,7 +13,7 @@ class PlaceViewModel : ViewModel() {
     val placeList = ArrayList<Place>()
 
     val placeLiveData = Transformations.switchMap(_searchLiveData) { query ->
-        Log.d("PlaceViewModel", "query value = $query")
+//        Log.d("PlaceViewModel", "query value = $query")
         Repository.searchPlace(query)
     }
 

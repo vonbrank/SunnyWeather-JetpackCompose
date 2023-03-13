@@ -33,7 +33,11 @@ import com.vonbrank.sunnyweather.ui.theme.Gray100
 import com.vonbrank.sunnyweather.ui.viewmodel.PlaceViewModel
 
 @Composable
-fun SearchPlace(onClickPlaceItem: () -> Unit = {}) {
+fun SearchPlace(
+    onClickPlaceItem: (lng: String, lat: String, placeName: String) -> Unit = { _: String, _: String, _: String ->
+
+    }
+) {
 
     val placeViewModel = viewModel<PlaceViewModel>()
     Column() {
@@ -127,7 +131,13 @@ fun SearchPlace(onClickPlaceItem: () -> Unit = {}) {
                         PlaceCard(
                             name = place.name,
                             address = place.address,
-                            modifier = Modifier.clickable { onClickPlaceItem() })
+                            modifier = Modifier.clickable {
+                                onClickPlaceItem(
+                                    place.location.lng,
+                                    place.location.lat,
+                                    place.name
+                                )
+                            })
                     }
                 }
             }

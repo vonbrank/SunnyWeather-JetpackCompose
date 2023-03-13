@@ -1,5 +1,6 @@
 package com.vonbrank.sunnyweather.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,9 +10,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vonbrank.sunnyweather.R
+import com.vonbrank.sunnyweather.logic.model.DailyResponse
+import com.vonbrank.sunnyweather.logic.model.getSky
 import com.vonbrank.sunnyweather.ui.theme.Gray600
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun TitleCard(title: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
@@ -35,32 +41,76 @@ fun PlaceCard(name: String, address: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ForecastCard(modifier: Modifier = Modifier) {
+fun ForecastCard(daily: DailyResponse.Daily, modifier: Modifier = Modifier) {
     TitleCard("预报", modifier = modifier) {
         Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-            for (i in 1..5) {
+            val days = daily.skycon.size
+            for (i in 0 until days) {
+                val skycon = daily.skycon[i]
+                val simpleDateFormat = SimpleDateFormat(
+                    "yyyy-MM-dd",
+                    Locale.getDefault()
+                )
+                val sky = getSky(skycon.value)
+                val temperature = daily.temperature[i]
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "2019-10-25", color = Gray600)
-                    Image(
-                        painterResource(id = R.drawable.ic_clear_day),
-                        contentDescription = "Day type icon"
+                    Text(
+                        text = simpleDateFormat.format(skycon.date),
+                        color = Gray600,
+                        modifier = Modifier.weight(4f)
                     )
-                    Text(text = "多云", color = Gray600)
-                    Text(text = "4 ~ 13 °C", color = Gray600)
+
+                    Image(
+                        painterResource(id = sky.icon),
+                        contentDescription = "Day type icon",
+                        modifier = Modifier.width(20.dp)
+                    )
+                    Text(
+                        text = sky.info, color = Gray600,
+                        modifier = Modifier.weight(3f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "${temperature.min.toInt()} ~ ${temperature.max.toInt()} °C",
+                        color = Gray600,
+                        modifier = Modifier.weight(3f),
+                        textAlign = TextAlign.End
+                    )
                 }
             }
         }
     }
 }
 
-@Composable
-fun LifeIndexCard(modifier: Modifier = Modifier) {
+data class LifeIndexItemProps(
+    val name: String,
+    val description: String,
+    @DrawableRes val iconId: Int
+)
 
-    val itemList = listOf(1, 2, 3, 4, 5)
+@Composable
+fun LifeIndexCard(daily: DailyResponse.Daily, modifier: Modifier = Modifier) {
+
+    val lifeIndex = daily.lifeIndex
+    val lifeIndexList = listOf(
+        LifeIndexItemProps("感冒", description = lifeIndex.coldRisk[0].desc, R.drawable.ic_coldrisk),
+        LifeIndexItemProps("穿衣", description = lifeIndex.dressing[0].desc, R.drawable.ic_dressing),
+        LifeIndexItemProps(
+            "实时紫外线",
+            description = lifeIndex.ultraviolet[0].desc,
+            R.drawable.ic_ultraviolet
+        ),
+        LifeIndexItemProps(
+            "洗车",
+            description = lifeIndex.carWashing[0].desc,
+            R.drawable.ic_carwashing
+        ),
+    )
+
     val columnCount = 2
 
     TitleCard(title = "生活指数", modifier = modifier) {
@@ -68,16 +118,11 @@ fun LifeIndexCard(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            for (i in itemList.indices step columnCount) {
+            for (i in lifeIndexList.indices step columnCount) {
                 Row() {
                     for (j in i until i + columnCount) {
-                        if (j < itemList.size) {
-                            LifeIndexItem(
-                                R.drawable.ic_coldrisk,
-                                "感冒",
-                                "极易发",
-                                modifier = Modifier.weight(1f)
-                            )
+                        if (j < lifeIndexList.size) {
+                            LifeIndexItem(lifeIndexList[j], modifier = Modifier.weight(1f))
                         }
                     }
                 }
@@ -87,15 +132,15 @@ fun LifeIndexCard(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LifeIndexItem(iconId: Int, name: String, description: String, modifier: Modifier = Modifier) {
+fun LifeIndexItem(props: LifeIndexItemProps, modifier: Modifier = Modifier) {
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         Image(
-            painterResource(id = iconId),
+            painterResource(id = props.iconId),
             contentDescription = "Life index icon"
         )
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = name, style = MaterialTheme.typography.body2, color = Gray600)
-            Text(text = description, style = MaterialTheme.typography.h6)
+            Text(text = props.name, style = MaterialTheme.typography.body2, color = Gray600)
+            Text(text = props.description, style = MaterialTheme.typography.h6)
         }
     }
 }

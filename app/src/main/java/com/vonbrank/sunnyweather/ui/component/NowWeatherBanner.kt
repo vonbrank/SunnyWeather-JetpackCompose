@@ -1,12 +1,11 @@
 package com.vonbrank.sunnyweather.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 
 import androidx.compose.material.Text
-import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,14 +19,21 @@ import com.vonbrank.sunnyweather.R
 
 
 @Composable
-fun NowWeatherBanner(modifier: Modifier = Modifier) {
+fun NowWeatherBanner(
+    placeName: String,
+    currentTemperatureText: String,
+    currentSkyText: String,
+    currentAqiText: String,
+    @DrawableRes currentBackgroundResourceId: Int,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(540.dp)
     ) {
         Image(
-            painterResource(id = R.drawable.bg_clear_day),
+            painterResource(id = currentBackgroundResourceId),
             contentDescription = "Weather background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
@@ -41,7 +47,7 @@ fun NowWeatherBanner(modifier: Modifier = Modifier) {
         ) {
 
             Text(
-                text = "City Name",
+                text = placeName,
                 modifier = Modifier.align(Alignment.TopCenter),
                 color = Color.White,
                 fontSize = 20.sp
@@ -53,7 +59,7 @@ fun NowWeatherBanner(modifier: Modifier = Modifier) {
             ) {
 
                 Text(
-                    text = "10 °C",
+                    text = currentTemperatureText,
                     Modifier.align(Alignment.CenterHorizontally),
                     style = MaterialTheme.typography.h1,
                     color = Color.White,
@@ -61,7 +67,7 @@ fun NowWeatherBanner(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    text = "Weather Name | Air Index",
+                    text = "$currentSkyText | $currentAqiText",
                     Modifier.align(Alignment.CenterHorizontally),
                     fontSize = 20.sp,
                     color = Color.White
