@@ -22,7 +22,7 @@ fun App() {
             color = MaterialTheme.colors.background
         ) {
             val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "searchPlace") {
+            NavHost(navController = navController, startDestination = "weatherDetail") {
                 composable("searchPlace") {
                     SearchPlace(onClickPlaceItem = {
                         navController.navigate("weatherDetail")

@@ -1,6 +1,5 @@
 package com.vonbrank.sunnyweather.ui.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -60,19 +59,28 @@ fun ForecastCard(modifier: Modifier = Modifier) {
 
 @Composable
 fun LifeIndexCard(modifier: Modifier = Modifier) {
+
+    val itemList = listOf(1, 2, 3, 4, 5)
+    val columnCount = 2
+
     TitleCard(title = "生活指数", modifier = modifier) {
         Column(
             modifier = Modifier.padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
-            Row() {
-                LifeIndexItem(R.drawable.ic_coldrisk, "感冒", "极易发", modifier = Modifier.weight(1f))
-                LifeIndexItem(R.drawable.ic_coldrisk, "感冒", "极易发", modifier = Modifier.weight(1f))
-            }
-            Row() {
-                LifeIndexItem(R.drawable.ic_coldrisk, "感冒", "极易发", modifier = Modifier.weight(1f))
-                LifeIndexItem(R.drawable.ic_coldrisk, "感冒", "极易发", modifier = Modifier.weight(1f))
+            for (i in itemList.indices step columnCount) {
+                Row() {
+                    for (j in i until i + columnCount) {
+                        if (j < itemList.size) {
+                            LifeIndexItem(
+                                R.drawable.ic_coldrisk,
+                                "感冒",
+                                "极易发",
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
             }
         }
     }

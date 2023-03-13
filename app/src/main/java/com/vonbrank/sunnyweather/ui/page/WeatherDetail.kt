@@ -2,8 +2,7 @@ package com.vonbrank.sunnyweather.ui.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,31 +14,34 @@ import com.vonbrank.sunnyweather.ui.theme.Gray100
 
 @Composable
 fun WeatherDetail(modifier: Modifier = Modifier) {
-    val scrollState = rememberScrollState();
 
     Surface(
         modifier = modifier
             .fillMaxSize()
     ) {
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
+                .background(Gray100)
         ) {
 
-            NowWeatherBanner()
+            item {
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .background(Gray100)
-                    .padding(32.dp),
-                verticalArrangement = Arrangement.spacedBy(32.dp)
-            ) {
+                NowWeatherBanner()
+            }
 
-                ForecastCard()
-                LifeIndexCard()
+            item {
+
+                Column(
+                    modifier = Modifier
+                        .padding(32.dp),
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
+                ) {
+
+                    ForecastCard()
+                    LifeIndexCard()
+                }
             }
         }
     }
