@@ -35,6 +35,7 @@ fun App() {
             LaunchedEffect(true) {
                 if (placeViewModel.isPlaceSaved()) {
                     val place = placeViewModel.getSavedPlace()
+                    navController.popBackStack()
                     navController.navigate(
                         "weatherDetail/${place.location.lng}/${place.location.lat}/${place.name}"
                     )
@@ -43,9 +44,12 @@ fun App() {
 
             NavHost(navController = navController, startDestination = "searchPlace") {
                 composable("searchPlace") {
-                    SearchPlace(onClickPlaceItem = { lng: String, lat: String, placeName: String ->
-                        navController.navigate("weatherDetail/$lng/$lat/$placeName")
-                    }, placeViewModel = placeViewModel)
+                    SearchPlace(
+                        onClickPlaceItem = { lng: String, lat: String, placeName: String ->
+                            navController.navigate("weatherDetail/$lng/$lat/$placeName")
+                        },
+                        placeViewModel = placeViewModel
+                    )
                 }
                 composable(
                     "weatherDetail/{lng}/{lat}/{placeName}",
@@ -58,7 +62,10 @@ fun App() {
                     weatherViewModel.locationLng = it.arguments?.getString("lng") ?: ""
                     weatherViewModel.locationLat = it.arguments?.getString("lat") ?: ""
                     weatherViewModel.placeName = it.arguments?.getString("placeName") ?: ""
-                    WeatherDetail(weatherViewModel = weatherViewModel)
+                    WeatherDetail(
+                        weatherViewModel = weatherViewModel,
+                        placeViewModel = placeViewModel
+                    )
                 }
             }
         }

@@ -3,9 +3,13 @@ package com.vonbrank.sunnyweather.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,8 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vonbrank.sunnyweather.R
-
 
 @Composable
 fun NowWeatherBanner(
@@ -25,6 +27,7 @@ fun NowWeatherBanner(
     currentSkyText: String,
     currentAqiText: String,
     @DrawableRes currentBackgroundResourceId: Int,
+    onMenuButtonClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -39,6 +42,14 @@ fun NowWeatherBanner(
             contentScale = ContentScale.Crop,
             alignment = Alignment.BottomCenter
         )
+
+        IconButton(onClick = onMenuButtonClick, modifier = Modifier.align(Alignment.TopStart)) {
+            Icon(
+                imageVector = Icons.Filled.Menu,
+                contentDescription = "Icon Button Icon",
+                tint = Color.White
+            )
+        }
 
         Box(
             modifier = Modifier
