@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -15,6 +16,7 @@ import androidx.navigation.navArgument
 import com.vonbrank.sunnyweather.ui.page.SearchPlace
 import com.vonbrank.sunnyweather.ui.page.WeatherDetail
 import com.vonbrank.sunnyweather.ui.theme.SunnyWeatherTheme
+import com.vonbrank.sunnyweather.ui.viewmodel.PlaceViewModel
 import com.vonbrank.sunnyweather.ui.viewmodel.WeatherViewModel
 
 @Composable
@@ -28,12 +30,22 @@ fun App() {
             val navController = rememberNavController()
 
             val weatherViewModel: WeatherViewModel = viewModel()
+            val placeViewModel: PlaceViewModel = viewModel()
+
+            LaunchedEffect(true) {
+                if (placeViewModel.isPlaceSaved()) {
+                    val place = placeViewModel.getSavedPlace()
+                    navController.navigate(
+                        "weatherDetail/${place.location.lng}/${place.location.lat}/${place.name}"
+                    )
+                }
+            }
 
             NavHost(navController = navController, startDestination = "searchPlace") {
                 composable("searchPlace") {
                     SearchPlace(onClickPlaceItem = { lng: String, lat: String, placeName: String ->
                         navController.navigate("weatherDetail/$lng/$lat/$placeName")
-                    })
+                    }, placeViewModel = placeViewModel)
                 }
                 composable(
                     "weatherDetail/{lng}/{lat}/{placeName}",
@@ -46,7 +58,7 @@ fun App() {
                     weatherViewModel.locationLng = it.arguments?.getString("lng") ?: ""
                     weatherViewModel.locationLat = it.arguments?.getString("lat") ?: ""
                     weatherViewModel.placeName = it.arguments?.getString("placeName") ?: ""
-                    WeatherDetail(viewModel = weatherViewModel)
+                    WeatherDetail(weatherViewModel = weatherViewModel)
                 }
             }
         }

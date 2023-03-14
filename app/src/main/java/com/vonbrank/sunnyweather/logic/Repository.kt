@@ -1,6 +1,7 @@
 package com.vonbrank.sunnyweather.logic
 
 import androidx.lifecycle.liveData
+import com.vonbrank.sunnyweather.logic.dao.PlaceDao
 import com.vonbrank.sunnyweather.logic.model.Place
 import com.vonbrank.sunnyweather.logic.model.Weather
 import com.vonbrank.sunnyweather.logic.network.SunnyWeatherNetwork
@@ -55,4 +56,10 @@ object Repository {
             }
             emit(result)
         }
+
+    fun savePlace(place: Place) = PlaceDao.savePlace(place)
+
+    fun getSavedPlace() = PlaceDao.getSavedPlace()
+
+    fun isPlaceSaved() = PlaceDao.isPlaceSaved()
 }

@@ -36,10 +36,9 @@ import com.vonbrank.sunnyweather.ui.viewmodel.PlaceViewModel
 fun SearchPlace(
     onClickPlaceItem: (lng: String, lat: String, placeName: String) -> Unit = { _: String, _: String, _: String ->
 
-    }
+    },
+    placeViewModel: PlaceViewModel = viewModel()
 ) {
-
-    val placeViewModel = viewModel<PlaceViewModel>()
     Column() {
         Surface(
             modifier = Modifier
@@ -132,6 +131,7 @@ fun SearchPlace(
                             name = place.name,
                             address = place.address,
                             modifier = Modifier.clickable {
+                                placeViewModel.savePlace(place)
                                 onClickPlaceItem(
                                     place.location.lng,
                                     place.location.lat,

@@ -16,28 +16,31 @@ import com.vonbrank.sunnyweather.ui.theme.Gray100
 import com.vonbrank.sunnyweather.ui.viewmodel.WeatherViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vonbrank.sunnyweather.SunnyWeatherApplication
-import com.vonbrank.sunnyweather.logic.model.RealtimeResponse
 import com.vonbrank.sunnyweather.logic.model.Weather
 import com.vonbrank.sunnyweather.logic.model.getSky
 
 @Composable
-fun WeatherDetail(modifier: Modifier = Modifier, viewModel: WeatherViewModel = viewModel()) {
+fun WeatherDetail(
+    modifier: Modifier = Modifier, weatherViewModel: WeatherViewModel = viewModel(),
+) {
 
     var loading by remember {
         mutableStateOf(true)
     }
 
-    LaunchedEffect(true) {
+    DisposableEffect(weatherViewModel.placeName) {
         loading = true
-        viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
-        loading = false
+        weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)
+        onDispose {
+        }
     }
 
-    val weatherResult by viewModel.weatherLiveData.observeAsState()
+    val weatherResult by weatherViewModel.weatherLiveData.observeAsState()
     val weather by produceState<Weather?>(initialValue = null, weatherResult) {
         if (weatherResult == null) {
         } else {
             val weather = weatherResult!!.getOrNull()
+            loading = false
             if (weather != null) {
                 value = weather
             } else {
@@ -67,7 +70,7 @@ fun WeatherDetail(modifier: Modifier = Modifier, viewModel: WeatherViewModel = v
                 item {
 
                     NowWeatherBanner(
-                        placeName = viewModel.placeName,
+                        placeName = weatherViewModel.placeName,
                         currentTemperatureText = "${realtime.temperature.toInt()} °C",
                         currentSkyText = getSky(realtime.skycon).info,
                         currentAqiText = "空气指数 ${realtime.airQuality.aqi.chn.toInt()}",
