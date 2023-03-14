@@ -1,12 +1,15 @@
 package com.vonbrank.sunnyweather.ui.page
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vonbrank.sunnyweather.ui.component.ForecastCard
@@ -15,46 +18,26 @@ import com.vonbrank.sunnyweather.ui.component.NowWeatherBanner
 import com.vonbrank.sunnyweather.ui.theme.Gray100
 import com.vonbrank.sunnyweather.ui.viewmodel.WeatherViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.vonbrank.sunnyweather.SunnyWeatherApplication
-import com.vonbrank.sunnyweather.logic.model.Weather
 import com.vonbrank.sunnyweather.logic.model.getSky
 import com.vonbrank.sunnyweather.ui.viewmodel.PlaceViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WeatherDetail(
     modifier: Modifier = Modifier,
     weatherViewModel: WeatherViewModel = viewModel(),
     placeViewModel: PlaceViewModel = viewModel(),
 ) {
-
-    var loading by remember {
-        mutableStateOf(true)
-    }
+    val refreshing by weatherViewModel.refreshing.observeAsState()
 
     DisposableEffect(weatherViewModel.placeName) {
-        loading = true
         weatherViewModel.refreshWeather(weatherViewModel.locationLng, weatherViewModel.locationLat)
         onDispose {
         }
     }
 
-    val weatherResult by weatherViewModel.weatherLiveData.observeAsState()
-    val weather by produceState<Weather?>(initialValue = null, weatherResult) {
-        if (weatherResult == null) {
-            return@produceState
-        } else {
-            val weather = weatherResult!!.getOrNull()
-            loading = false
-            if (weather != null) {
-                value = weather
-            } else {
-                Toast.makeText(SunnyWeatherApplication.context, "无法成功获取天气信息", Toast.LENGTH_SHORT)
-                    .show()
-                weatherResult!!.exceptionOrNull()?.printStackTrace()
-            }
-        }
-    }
+    val weather by weatherViewModel.weatherLiveData.observeAsState()
 
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
@@ -81,7 +64,19 @@ fun WeatherDetail(
         modifier = modifier
     ) { paddingValues ->
 
-        Box(modifier = Modifier.padding(paddingValues)) {
+        val pullRefreshState = rememberPullRefreshState(refreshing ?: false, onRefresh = {
+            weatherViewModel.setRefreshing(true)
+            weatherViewModel.refreshWeather(
+                weatherViewModel.locationLng,
+                weatherViewModel.locationLat
+            )
+        })
+
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .pullRefresh(pullRefreshState)
+        ) {
 
             LazyColumn(
                 modifier = Modifier
@@ -89,7 +84,7 @@ fun WeatherDetail(
                     .background(Gray100)
             ) {
 
-                if (weather != null && !loading) {
+                if (weather != null) {
 
                     val realtime = weather!!.realtime
                     val daily = weather!!.daily
@@ -124,8 +119,25 @@ fun WeatherDetail(
                             LifeIndexCard(daily)
                         }
                     }
+                } else {
+                    item {
+                        Column(
+                            modifier = Modifier.fillParentMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            CircularProgressIndicator()
+                        }
+                    }
                 }
             }
+
+            PullRefreshIndicator(
+                refreshing ?: false,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
     }
 }
