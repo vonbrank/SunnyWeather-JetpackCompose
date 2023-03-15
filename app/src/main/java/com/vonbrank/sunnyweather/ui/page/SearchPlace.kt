@@ -29,7 +29,6 @@ import com.vonbrank.sunnyweather.R
 import com.vonbrank.sunnyweather.SunnyWeatherApplication
 import com.vonbrank.sunnyweather.logic.model.Place
 import com.vonbrank.sunnyweather.ui.component.PlaceCard
-import com.vonbrank.sunnyweather.ui.theme.Gray100
 import com.vonbrank.sunnyweather.ui.viewmodel.PlaceViewModel
 
 @Composable
@@ -45,7 +44,8 @@ fun SearchPlace(
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.secondary)
                 .padding(16.dp),
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            color = MaterialTheme.colors.primary
         ) {
             var query by remember {
                 mutableStateOf("")
@@ -58,9 +58,10 @@ fun SearchPlace(
                     Log.d("Search place", "new value = $newValue")
                 },
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
+                    backgroundColor = MaterialTheme.colors.surface,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                    unfocusedIndicatorColor = Color.Transparent,
+                    textColor = MaterialTheme.colors.onSurface
                 ),
                 placeholder = {
                     Text(text = "输入地址")
@@ -98,7 +99,7 @@ fun SearchPlace(
             } else {
                 val places = placeListResult?.getOrNull()
                 if (places != null) {
-                    value = places;
+                    value = places
                 } else {
                     value = ArrayList()
                     Toast.makeText(
@@ -117,14 +118,14 @@ fun SearchPlace(
             Surface(
                 modifier = Modifier
                     .weight(1f)
-                    .background(Gray100)
+                    .background(MaterialTheme.colors.background)
                     .padding(16.dp)
             ) {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(24.dp),
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Gray100)
+                        .background(MaterialTheme.colors.background)
                 ) {
                     items(placeList) { place ->
                         PlaceCard(

@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import com.vonbrank.sunnyweather.ui.component.ForecastCard
 import com.vonbrank.sunnyweather.ui.component.LifeIndexCard
 import com.vonbrank.sunnyweather.ui.component.NowWeatherBanner
-import com.vonbrank.sunnyweather.ui.theme.Gray100
 import com.vonbrank.sunnyweather.ui.viewmodel.WeatherViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vonbrank.sunnyweather.logic.model.getSky
@@ -81,7 +80,7 @@ fun WeatherDetail(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Gray100)
+                    .background(MaterialTheme.colors.background)
             ) {
 
                 if (weather != null) {

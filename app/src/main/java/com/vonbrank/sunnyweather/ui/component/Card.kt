@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -133,14 +135,21 @@ fun LifeIndexCard(daily: DailyResponse.Daily, modifier: Modifier = Modifier) {
 
 @Composable
 fun LifeIndexItem(props: LifeIndexItemProps, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Image(
-            painterResource(id = props.iconId),
-            contentDescription = "Life index icon"
-        )
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = props.name, style = MaterialTheme.typography.body2, color = Gray600)
-            Text(text = props.description, style = MaterialTheme.typography.h6)
+    Surface(
+        modifier = modifier,
+        contentColor = MaterialTheme.colors.onSurface
+    ) {
+
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Image(
+                painterResource(id = props.iconId),
+                contentDescription = "Life index icon",
+                colorFilter = ColorFilter.tint(color = MaterialTheme.colors.onSurface)
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(text = props.name, style = MaterialTheme.typography.body2)
+                Text(text = props.description, style = MaterialTheme.typography.h6)
+            }
         }
     }
 }
